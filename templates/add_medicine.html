@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Medicine{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Add New Medicine</h2>
+<form method="post">
+    <div class="mb-3">
+        <label for="name" class="form-label">Medicine Name</label>
+        <input type="text" class="form-control" name="name" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="batch_number" class="form-label">Batch Number</label>
+        <input type="text" class="form-control" name="batch_number" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="expiry_date" class="form-label">Expiry Date</label>
+        <input type="date" class="form-control" name="expiry_date" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" name="quantity" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <input type="number" step="0.01" class="form-control" name="price" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="alert_level" class="form-label">Alert Level</label>
+        <input type="number" class="form-control" name="alert_level" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Medicine</button>
+</form>
+{% endblock %}

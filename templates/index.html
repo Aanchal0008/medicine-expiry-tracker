@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Expired Medicines</h5>
+                <p class="card-text fs-4">{{ expired|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Near Expiry</h5>
+                <p class="card-text fs-4">{{ near_expiry|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Low Stock</h5>
+                <p class="card-text fs-4">{{ low_stock|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Total Medicines</h5>
+                <p class="card-text fs-4">{{ total_medicines }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<h2 class="mb-3">All Medicines</h2>
+
+{% if medicines|length == 0 %}
+    <p>No medicines available.</p>
+{% else %}
+
+    <!-- 🔍 Search Bar -->
+    <div class="row mb-3">
+        <div class="col-md-6 offset-md-3">
+            <input type="text" id="medicineSearch" class="form-control rounded-3 shadow-sm" placeholder="Search medicine by name, batch, or type...">
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Batch</th>
+                    <th>Expiry</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="medicineTable">
+                {% for med in medicines %}
+                <tr class="
+                    {% if med in expired %}table-danger{% elif med in near_expiry %}table-warning{% elif med in low_stock %}table-info{% endif %}
+                    {% if loop.index > 5 %}d-none extra-row{% endif %}
+                ">
+                    <td>{{ med[1] }}</td>
+                    <td>{{ med[2] }}</td>
+                    <td>{{ med[3] }}</td>
+                    <td>{{ med[4] }}</td>
+                    <td>{{ med[5] }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_medicine', id=med[0]) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="{{ url_for('delete_medicine', id=med[0]) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        <button id="toggleBtn" class="btn btn-outline-secondary">Show More</button>
+    </div>
+
+    <script>
+    // Show More / Show Less
+    document.getElementById('toggleBtn').addEventListener('click', function () {
+        const extraRows = document.querySelectorAll('.extra-row');
+        const isHidden = extraRows[0]?.classList.contains('d-none');
+        extraRows.forEach(row => row.classList.toggle('d-none'));
+        this.textContent = isHidden ? 'Show Less' : 'Show More';
+    });
+
+    // 🔍 Live Search
+    const searchInput = document.getElementById('medicineSearch');
+    searchInput.addEventListener('keyup', function () {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#medicineTable tr');
+        const toggleBtn = document.getElementById('toggleBtn');
+
+        if (filter.trim() === "") {
+            // Restore original hiding if search is empty
+            rows.forEach((row, index) => {
+                if (index >= 5) {
+                    row.classList.add('d-none', 'extra-row');
+                } else {
+                    row.classList.remove('d-none');
+                }
+            });
+            toggleBtn.style.display = 'block';
+        } else {
+            // Show only matching rows
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(filter)) {
+                    row.classList.remove('d-none');
+                } else {
+                    row.classList.add('d-none');
+                }
+            });
+            toggleBtn.style.display = 'none'; // Hide Show More button during search
+        }
+    });
+</script>
+
+
+{% endif %}
+
+{% endblock %}
