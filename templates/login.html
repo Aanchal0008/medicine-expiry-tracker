@@ -2,8 +2,20 @@
 
 {% block content %}
 <div class="d-flex justify-content-center align-items-center min-vh-100">
-  <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+  <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
     <h2 class="text-center mb-4">Login</h2>
+    
+    <!-- Flash Error Message -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert alert-danger">
+          {% for category, message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
     <form method="POST" action="{{ url_for('login') }}">
       <div class="mb-3">
         <label class="form-label">Username</label>
@@ -13,9 +25,6 @@
         <label class="form-label">Password</label>
         <input type="password" name="password" class="form-control" required>
       </div>
-      {% if error %}
-      <div class="alert alert-danger">{{ error }}</div>
-      {% endif %}
       <div class="d-grid">
         <button type="submit" class="btn btn-primary">Login</button>
       </div>
