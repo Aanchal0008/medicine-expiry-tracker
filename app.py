@@ -222,7 +222,6 @@ def low_stock_medicines():
 @app.route('/dashboard')
 def dashboard():
     if 'user' not in session:
-        flash('Please log in to view the dashboard.')
         return redirect(url_for('login'))
 
     conn = sqlite3.connect('database.db')
